@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RP UI Kit — готовые интерфейсы для вашего GTA RP сервера</title>
+  <meta name="description" content="Инвентарь с drag-and-drop, телефон, спидометр/HUD и чат — готовые веб-интерфейсы для GTA RP серверов. Работают на RAGE MP, alt:V и в обычном браузере. Два файла, ноль сборки." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="RP UI Kit" />
+  <meta property="og:description" content="Готовые интерфейсы для RP-серверов: инвентарь, телефон, HUD, чат. Любой движок." />
+  <meta property="og:image" content="assets/og-banner.png" />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="stylesheet" href="kit/rp-ui-kit.css" />
+  <style>
+    :root { --bg: #151210; --paper: #f2ead9; --acc: #ff8a2a; --dim: rgba(242,234,217,.55); }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      background:
+        linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px) 0 0/28px 28px,
+        linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px) 0 0/28px 28px,
+        var(--bg);
+      color: var(--paper);
+      font: 15px/1.55 system-ui, "Segoe UI", "DejaVu Sans", sans-serif;
+    }
+    [hidden] { display: none !important; }
+    .top {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+      padding: 14px 22px; border-bottom: 2px dashed rgba(242,234,217,.18);
+    }
+    .top img { width: 44px; height: 44px; border-radius: 12px; border: 2px solid rgba(242,234,217,.3); }
+    .top h1 { font: 800 19px/1.2 ui-monospace, "Cascadia Mono", monospace; letter-spacing: 1px; margin: 0; }
+    .top h1 b { color: var(--acc); }
+    .badge {
+      font: 800 10.5px ui-monospace, monospace; letter-spacing: 1.5px; text-transform: uppercase;
+      border: 2px solid rgba(242,234,217,.25); border-radius: 6px; padding: 4px 10px; color: var(--dim);
+    }
+    .badge.hot { border-color: var(--acc); color: var(--acc); }
+    .top .sp { flex: 1; }
+    .top a { color: var(--acc); font: 700 13px ui-monospace, monospace; text-decoration: none; }
+
+    .wrap { display: grid; grid-template-columns: 190px 1fr 300px; gap: 18px; padding: 18px 22px; max-width: 1440px; margin: 0 auto; }
+    @media (max-width: 1080px) { .wrap { grid-template-columns: 1fr; } }
+
+    .nav { display: flex; flex-direction: column; gap: 8px; align-content: start; }
+    @media (max-width: 1080px) { .nav { flex-direction: row; flex-wrap: wrap; } }
+    .nav button {
+      text-align: left; padding: 11px 14px;
+      background: transparent; color: var(--paper);
+      border: 2px solid rgba(242,234,217,.18); border-radius: 10px;
+      font: 800 13px ui-monospace, monospace; letter-spacing: .5px; cursor: pointer;
+    }
+    .nav button small { display: block; font-weight: 500; color: var(--dim); font-size: 10.5px; letter-spacing: 0; }
+    .nav button.on { border-color: var(--acc); color: var(--acc); }
+    .nav button.on small { color: var(--dim); }
+
+    .stage {
+      position: relative; width: 100%; aspect-ratio: 16/9; min-height: 460px;
+      border: 3px solid rgba(242,234,217,.2); border-radius: 16px;
+      background:
+        radial-gradient(ellipse at 50% 120%, rgba(255,138,42,.12), transparent 60%),
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px) 0 0/32px 32px,
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px) 0 0/32px 32px,
+        #100e0c;
+      overflow: hidden;
+    }
+    .stage-label {
+      position: absolute; top: 10px; left: 12px; z-index: 1;
+      font: 800 10px ui-monospace, monospace; letter-spacing: 2px; color: var(--dim);
+      text-transform: uppercase;
+    }
+    .pane { position: absolute; inset: 0; }
+
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .controls button {
+      padding: 9px 14px; border-radius: 9px; cursor: pointer;
+      background: rgba(255,255,255,.05); color: var(--paper);
+      border: 2px solid rgba(242,234,217,.18);
+      font: 700 12.5px ui-monospace, monospace;
+    }
+    .controls button.primary { background: var(--acc); color: #17110a; border-color: var(--acc); font-weight: 800; }
+    .controls button:active { transform: translateY(1px); }
+
+    .log {
+      border: 2px dashed rgba(242,234,217,.18); border-radius: 12px; padding: 12px 14px;
+      font: 600 12px/1.7 ui-monospace, "DejaVu Sans Mono", monospace;
+      height: fit-content; max-height: 560px; overflow-y: auto;
+      position: sticky; top: 18px;
+    }
+    .log h3 { margin: 0 0 8px; font: 800 11px ui-monospace, monospace; letter-spacing: 2px; color: var(--dim); text-transform: uppercase; }
+    .log .ev { color: var(--acc); }
+    .log div.entry { border-bottom: 1px solid rgba(242,234,217,.08); padding: 5px 0; word-break: break-word; }
+    .log .empty { color: var(--dim); }
+
+    .snippet {
+      background: rgba(0,0,0,.35); border: 2px solid rgba(242,234,217,.14); border-radius: 12px;
+      margin: 12px 0; overflow: hidden;
+    }
+    .snippet summary {
+      padding: 12px 16px; cursor: pointer;
+      font: 800 13px ui-monospace, monospace; letter-spacing: .5px;
+    }
+    .snippet pre {
+      margin: 0; padding: 14px 16px; overflow-x: auto;
+      border-top: 2px dashed rgba(242,234,217,.12);
+      font: 500 12.5px/1.6 ui-monospace, "DejaVu Sans Mono", monospace;
+      color: #dce6c4;
+    }
+    .lede { color: var(--dim); max-width: 720px; }
+    code { background: rgba(255,138,42,.12); color: var(--acc); padding: 1px 6px; border-radius: 5px; font: 600 12.5px ui-monospace, monospace; }
+    footer { padding: 26px 22px 40px; color: var(--dim); font: 600 12px ui-monospace, monospace; text-align: center; }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <img src="assets/logo.png" alt="RP UI Kit logo" />
+    <h1>RP UI KIT <b>// готовые интерфейсы для RP-серверов</b></h1>
+    <span class="badge hot">engine-free</span>
+    <span class="badge">zero build</span>
+    <span class="badge">MIT</span>
+    <span class="sp"></span>
+    <a href="https://github.com/hilsetapp/rp-ui-kit" target="_blank" rel="noopener">github ★</a>
+  </header>
+
+  <div class="wrap">
+    <nav class="nav" id="nav">
+      <button data-tab="inv" class="on">🎒 Инвентарь <small>drag-and-drop</small></button>
+      <button data-tab="hud">🚗 HUD <small>спидометр</small></button>
+      <button data-tab="chat">💬 Чат <small>теги + затухание</small></button>
+      <button data-tab="phone">📱 Телефон <small>приложения внутри</small></button>
+      <button data-tab="wire">🔌 Подключение <small>RAGE / alt:V</small></button>
+    </nav>
+
+    <div>
+      <div class="stage">
+        <span class="stage-label">«игровой экран» — так это увидит игрок</span>
+
+        <div class="pane" data-pane="inv"></div>
+        <div class="pane" data-pane="hud" hidden></div>
+        <div class="pane" data-pane="chat" hidden></div>
+        <div class="pane" data-pane="phone" hidden></div>
+
+        <div class="pane" data-pane="wire" hidden style="overflow-y:auto;padding:26px 34px">
+          <h2 style="font:800 20px ui-monospace,monospace;margin:0 0 8px">Подключение за 4 шага</h2>
+          <p class="lede">Скопируй <code>kit/rp-ui-kit.js</code> и <code>kit/rp-ui-kit.css</code> в CEF-папку твоего проекта
+          и подключи на странице. Адаптер сам определит движок (<code>mp.trigger</code> из RAGE MP,
+          <code>alt.emit</code> из alt:V) — в браузере включается демо-режим, события видно в консоли.</p>
+
+          <div class="snippet" open>
+            <summary>① index.html твоего CEF</summary>
+            <pre>&lt;link rel="stylesheet" href="rp-ui-kit.css"&gt;
+&lt;script src="rp-ui-kit.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  // входящие от сервера события:
+  RPUI.on("hud:update", d => window.hud && hud.update(d));
+&lt;/script&gt;</pre>
+          </div>
+
+          <div class="snippet">
+            <summary>② RAGE MP — клиентская часть (client_packages/*.js)</summary>
+            <pre>// сервер шлёт в браузер:
+browser.call("RPUI.receive", JSON.stringify({
+  ev: "hud:update",
+  data: { speed: player.vehicle.velocity.length() * 3.6 }
+}));
+// ответы из интерфейса приходят в mp.events:
+mp.events.add("rpui:inventory:use", (json) => {
+  const { data } = JSON.parse(json);
+  mp.gui.chat.push(`игрок хочет использовать предмет в слоте ${data.slot}`);
+});</pre>
+          </div>
+
+          <div class="snippet">
+            <summary>③ alt:V — клиентская часть</summary>
+            <pre>webView.emit("RPUI.receive", "hud:update", { speed: 120 });
+alt.on("rpui:inventory:use", ({ data }) => alt.log("use", data.slot));</pre>
+          </div>
+
+          <div class="snippet">
+            <summary>④ Тема под цвет сервера</summary>
+            <pre>:root { --rpui-accent: #4da6ff; }  /* один цвет — все компоненты ваши */</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls" data-controls="inv">
+        <button id="inv-add">+ случайный предмет</button>
+        <button id="inv-heavy">фу, тяжесть</button>
+        <button id="inv-clear">очистить</button>
+        <span style="color:var(--dim);font:600 12px ui-monospace,monospace;align-self:center">→ перетаскивай ячейки, правый клик — действия</span>
+      </div>
+      <div class="controls" data-controls="hud" hidden>
+        <button data-sp="0">стоп</button>
+        <button data-sp="60" class="primary">60 км/ч</button>
+        <button data-sp="120" class="primary">120 км/ч</button>
+        <button data-sp="185" class="primary">185 км/ч</button>
+        <button id="hud-fuel">−10 топлива</button>
+        <button id="hud-belt">ремень</button>
+        <button id="hud-eng">двигатель</button>
+        <button id="hud-street">улица…</button>
+      </div>
+      <div class="controls" data-controls="chat" hidden>
+        <button id="chat-msg" class="primary">+ сообщение</button>
+        <button id="chat-admin">админское</button>
+        <button id="chat-clear">очистить</button>
+        <span style="color:var(--dim);font:600 12px ui-monospace,monospace;align-self:center">→ поле ввода снизу слева тоже живое</span>
+      </div>
+      <div class="controls" data-controls="phone" hidden>
+        <button id="phone-toggle" class="primary">📱 открыть телефон</button>
+        <button id="phone-app">+ добавить своё приложение</button>
+        <span style="color:var(--dim);font:600 12px ui-monospace,monospace;align-self:center">→ СМС, банк, заметки, тема уже внутри</span>
+      </div>
+      <div class="controls" data-controls="wire" hidden>
+        <a href="https://github.com/hilsetapp/rp-ui-kit" target="_blank" rel="noopener"><button class="primary">скопировать файлы из репо →</button></a>
+      </div>
+    </div>
+
+    <aside class="log">
+      <h3>⚡ лентa событий (RPUI.on("*"))</h3>
+      <div id="log"><div class="empty">пока тихо… потыкай интерфейс</div></div>
+    </aside>
+  </div>
+
+  <footer>
+    rp ui kit · инвентарь, HUD, чат, телефон · работает на любом движке ·
+    <a href="https://github.com/hilsetapp/rp-ui-kit" target="_blank" rel="noopener" style="color:var(--acc)">★ put a star</a>
+  </footer>
+
+  <script src="kit/rp-ui-kit.js"></script>
+  <script>
+    /* ── event log ── */
+    var logEl = document.getElementById("log");
+    var empty = logEl.firstElementChild;
+    RPUI.on("*", function (ev, data) {
+      if (empty) { empty.remove(); empty = null; }
+      var div = document.createElement("div");
+      div.className = "entry";
+      div.innerHTML = '<span class="ev">⚡ ' + ev + "</span> " +
+        (data ? JSON.stringify(data).slice(0, 120) : "");
+      logEl.prepend(div);
+      while (logEl.children.length > 20) logEl.lastChild.remove();
+    });
+
+    /* ── tabs ── */
+    var panes = document.querySelectorAll("[data-pane]");
+    var ctrls = document.querySelectorAll("[data-controls]");
+    document.getElementById("nav").addEventListener("click", function (e) {
+      var b = e.target.closest("button[data-tab]");
+      if (!b) return;
+      document.querySelectorAll("#nav button").forEach(function (x) { x.classList.toggle("on", x === b); });
+      panes.forEach(function (p) { p.hidden = p.dataset.pane !== b.dataset.tab; });
+      ctrls.forEach(function (c) { c.hidden = c.dataset.controls !== b.dataset.tab; });
+      if (b.dataset.tab === "phone" && phone && !phoneOn) { phone.open(); phoneOn = true; }
+    });
+
+    /* ── inventory demo ── */
+    var inv = RPUI.Inventory({
+      columns: 6, rows: 5, maxWeight: 30, title: "Инвентарь",
+      items: [
+        { slot: 0, name: "Телефон", emoji: "📱", count: 1, weight: 0.2 },
+        { slot: 1, name: "ПМ", emoji: "🔫", count: 1, weight: 1.1 },
+        { slot: 2, name: "Бургер", emoji: "🍔", count: 3, weight: 0.4 },
+        { slot: 3, name: "Аптечка", emoji: "💊", count: 2, weight: 0.5 },
+        { slot: 6, name: "Глушилка", emoji: "📡", count: 1, weight: 0.9 },
+        { slot: 7, name: "Верёвка", emoji: "🪢", count: 1, weight: 0.7 },
+        { slot: 12, name: "Кока-кола", emoji: "🥤", count: 4, weight: 0.3 },
+      ],
+    });
+    document.querySelector('[data-pane="inv"]').appendChild(inv.el);
+
+    var POOL = [
+      { name: "Донат", emoji: "🍩", weight: 0.2 }, { name: "Рация", emoji: "📻", weight: 0.4 },
+      { name: "Бронежилет", emoji: "🦺", weight: 2.5 }, { name: "Сырок", emoji: "🧀", weight: 0.1 },
+      { name: "Стаминка", emoji: "💉", weight: 0.3 }, { name: "Бензин", emoji: "⛽", weight: 3.0 },
+      { name: "Маска", emoji: "🎭", weight: 0.2 }, { name: "Наручники", emoji: "🔗", weight: 0.5 },
+    ];
+    document.getElementById("inv-add").onclick = function () {
+      var p = POOL[Math.floor(Math.random() * POOL.length)];
+      var cells = document.querySelectorAll('[data-pane="inv"] .rpui-cell.empty');
+      if (!cells.length) return;
+      var slot = Number(cells[0].dataset.slot);
+      inv.updateItem(slot, { name: p.name, emoji: p.emoji, count: 1 + Math.floor(Math.random() * 4), weight: p.weight });
+    };
+    document.getElementById("inv-heavy").onclick = function () {
+      inv.updateItem(29, { name: "Бабушкин пирог", emoji: "🥧", count: 12, weight: 2.4 });
+    };
+    document.getElementById("inv-clear").onclick = function () { inv.setItems([]); };
+
+    /* ── HUD demo ── */
+    var hud = RPUI.HUD();
+    document.querySelector('[data-pane="hud"]').appendChild(hud.el);
+    var fuel = 62, belt = false, engOk = true;
+    hud.update({ speed: 0, fuel: fuel, belt: belt, engine: false, street: "Дел Пьерро" });
+    var streets = ["Дел Пьерро", "Веспуччи", "Вайнвуд Хиллз", "Пилбокс Хилл", "Ла Меса"];
+    var streetI = 0;
+    document.querySelectorAll("[data-sp]").forEach(function (b) {
+      b.onclick = function () { hud.update({ speed: Number(b.dataset.sp) }); };
+    });
+    document.getElementById("hud-fuel").onclick = function () { fuel = Math.max(0, fuel - 10); hud.update({ fuel: fuel }); };
+    document.getElementById("hud-belt").onclick = function () { belt = !belt; hud.update({ belt: belt }); };
+    document.getElementById("hud-eng").onclick = function () { engOk = !engOk; hud.update({ engine: !engOk }); };
+    document.getElementById("hud-street").onclick = function () { streetI = (streetI + 1) % streets.length; hud.update({ street: streets[streetI] }); };
+
+    /* ── chat demo ── */
+    var chat = RPUI.Chat({ fadeMs: 10000, input: true });
+    document.querySelector('[data-pane="chat"]').appendChild(chat.el);
+    var demoMsgs = [
+      { tag: "ID 12", nick: "Макс Дитрих", text: "Эпицентр, епты, кто поедет за поставкой?" },
+      { tag: "ID 88", nick: "Лена Зарова", text: "Иду, /me машет рукой" },
+      { tag: "ID 7", nick: "Гоша Приштолс", text: "лок: за магазином 24/7" },
+      { text: "[SYS] Тёмная погода ожидается в 22:00", cls: "system", tag: "SYS" },
+      { tag: "ID 3", nick: "Коль Гжегож", text: "yy, ждите на точке, +uss" },
+    ];
+    document.getElementById("chat-msg").onclick = function () { chat.push(demoMsgs[Math.floor(Math.random() * demoMsgs.length)]); };
+    document.getElementById("chat-admin").onclick = function () { chat.push({ tag: "ADMIN", nick: "Sport_Admin", text: "повёлся на репорт за 30 сек", cls: "admin" }); };
+    document.getElementById("chat-clear").onclick = function () { chat.clear(); };
+
+    /* ── phone demo ── */
+    var phone = RPUI.Phone({ balance: 12450 });
+    document.querySelector('[data-pane="phone"]').appendChild(phone.el);
+    var phoneOn = false;
+    document.getElementById("phone-toggle").onclick = function () {
+      phoneOn = !phoneOn;
+      phoneOn ? phone.open() : phone.close();
+    };
+    var extraApp = false;
+    document.getElementById("phone-app").onclick = function () {
+      if (extraApp) return; extraApp = true;
+      /* пересоздаём телефон с кастомным приложением — так же легко, как на вашем сервере.
+         Приложение без view → сервер получает событие phone:app и решает, что открыть. */
+      phone.destroy();
+      phone = RPUI.Phone({ balance: 12450, apps: [{ id: "gps", icon: "🗺", name: "GPS" }] });
+      document.querySelector('[data-pane="phone"]').appendChild(phone.el);
+      if (phoneOn) phone.open();
+    };
+  </script>
+</body>
+</html>
