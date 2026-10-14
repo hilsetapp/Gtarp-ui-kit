@@ -5,7 +5,7 @@
 
    Copy ONE line into your page:
      <link rel="stylesheet" href="rp-ui-kit.css">
-     <script src="rp-ui-kit.js"></script>
+     <script src="rp-ui-kit.js"><\/script>
    ═══════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -29,6 +29,7 @@
     return el;
   }
   var $ = function (root, sel) { return root.querySelector(sel); };
+  function applySkin(el, opts) { if (opts && opts.skin) el.setAttribute("data-skin", opts.skin); }
 
   /* ─────────── engine bridge ─────────── */
   function detectEngine() {
@@ -127,6 +128,7 @@
         h("button", { class: "rpui-btn", onclick: function () { api.close(); } }, ["Close"]),
       ]),
     ]);
+    applySkin(el, opts);
 
     function cellInner(it) {
       if (!it) return [];
@@ -277,6 +279,8 @@
     var engEl = h("span", { class: "off" }, ["🔧"]);
     var fuelBar = h("span");
     var fuelWrap = h("div", { class: "rpui-hud-fuel" }, [fuelBar]);
+    var rpmBar = h("span");
+    var rpmEl = h("div", { class: "rpui-hud-rpm" }, [rpmBar]);
     var streetEl = h("div", { class: "rpui-hud-street" }, ["Los Santos"]);
     var el = h("div", { class: "rpui-hud rpui-box" }, [
       streetEl,
@@ -285,8 +289,10 @@
         h("div", { class: "rpui-hud-flags" }, [beltEl, engEl]),
         fuelWrap,
         h("div", { class: "rpui-hud-fuellbl" }, ["FUEL"]),
+        rpmEl,
       ]),
     ]);
+    applySkin(el, opts);
 
     function gearFor(sp) {
       if (sp <= 0) return "N";
@@ -314,6 +320,7 @@
         if (d.belt != null) beltEl.classList.toggle("off", !d.belt);
         /* engine = check-engine warning: true → lamp lit, false → dimmed */
         if (d.engine != null) engEl.classList.toggle("off", !d.engine);
+        if (d.rpm != null) rpmBar.style.width = Math.max(0, Math.min(1, d.rpm)) * 100 + "%";
         if (d.street != null) streetEl.textContent = d.street;
       },
       destroy: function () { el.remove(); },
@@ -338,6 +345,7 @@
     ]);
     if (!opts.input) form.setAttribute("hidden", "hidden");
     var el = h("div", { class: "rpui-chat rpui-box" }, [list, form]);
+    applySkin(el, opts);
 
     function prune() {
       while (list.children.length > maxMsgs) list.firstChild.remove();
@@ -397,6 +405,7 @@
       h("div", { class: "rpui-phone-status" }, [timeEl, h("span", {}, ["📶 🔋"])]) ,
       screen,
     ]);
+    applySkin(el, opts);
 
     function showHome() { appView.classList.remove("on"); appView.innerHTML = ""; }
     function openView(title, body) {
@@ -528,7 +537,7 @@
 
   /* ─────────── public API ─────────── */
   window.RPUI = {
-    version: "0.1.0",
+    version: "0.2.0",
     engine: ENGINE,
     on: on, off: off, emit: emit, receive: receive,
     Inventory: Inventory, HUD: HUD, Chat: Chat, Phone: Phone,

@@ -108,6 +108,10 @@ alt.on("rpui:chat:send", ({ data }) => alt.emitServer("chat:send", data.text));
 :root { --rpui-accent: #ff5340; }
 ```
 
+**Скины на выбор** (по 3 вида на компонент, v0.2.0): опция `skin` при создании —
+инвентарь `tight`/`huge`, HUD `naked`/`pro`, чат `bubble`/`console`, телефон `arctic`/`bubblegum`.
+Свой скин добавляется в CSS около блока `SKINS` — скопируй готовый пресет и перекрась.
+
 **Свои приложения телефона:**
 ```js
 const phone = RPUI.Phone({

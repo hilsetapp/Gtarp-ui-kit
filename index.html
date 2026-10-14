@@ -71,7 +71,7 @@
     }
     .pane { position: absolute; inset: 0; }
 
-    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
     .controls button {
       padding: 9px 14px; border-radius: 9px; cursor: pointer;
       background: rgba(255,255,255,.05); color: var(--paper);
@@ -80,6 +80,14 @@
     }
     .controls button.primary { background: var(--acc); color: #17110a; border-color: var(--acc); font-weight: 800; }
     .controls button:active { transform: translateY(1px); }
+    .ctrl-label { font: 800 11px ui-monospace, monospace; color: var(--dim); letter-spacing: 2px; text-transform: uppercase; }
+    .skin-chip {
+      padding: 7px 13px; border-radius: 999px; cursor: pointer;
+      background: transparent; color: var(--paper);
+      border: 2px solid rgba(242,234,217,.22);
+      font: 800 12px ui-monospace, monospace;
+    }
+    .skin-chip.on { border-color: var(--acc); color: var(--acc); background: rgba(255,138,42,.08); }
 
     .log {
       border: 2px dashed rgba(242,234,217,.18); border-radius: 12px; padding: 12px 14px;
@@ -124,10 +132,10 @@
 
   <div class="wrap">
     <nav class="nav" id="nav">
-      <button data-tab="inv" class="on">🎒 Инвентарь <small>drag-and-drop</small></button>
-      <button data-tab="hud">🚗 HUD <small>спидометр</small></button>
-      <button data-tab="chat">💬 Чат <small>теги + затухание</small></button>
-      <button data-tab="phone">📱 Телефон <small>приложения внутри</small></button>
+      <button data-tab="inv" class="on">🎒 Инвентарь <small>drag-and-drop + 3 скина</small></button>
+      <button data-tab="hud">🚗 HUD <small>3 скина</small></button>
+      <button data-tab="chat">💬 Чат <small>3 скина</small></button>
+      <button data-tab="phone">📱 Телефон <small>приложения + 3 скина</small></button>
       <button data-tab="wire">🔌 Подключение <small>RAGE / alt:V</small></button>
     </nav>
 
@@ -151,8 +159,8 @@
             <pre>&lt;link rel="stylesheet" href="rp-ui-kit.css"&gt;
 &lt;script src="rp-ui-kit.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  // входящие от сервера события:
   RPUI.on("hud:update", d => window.hud && hud.update(d));
+  RPUI.on("inv:open",    d => inv.setItems(d.items)), inv.show();
 &lt;/script&gt;</pre>
           </div>
 
@@ -177,38 +185,61 @@ alt.on("rpui:inventory:use", ({ data }) => alt.log("use", data.slot));</pre>
           </div>
 
           <div class="snippet">
-            <summary>④ Тема под цвет сервера</summary>
-            <pre>:root { --rpui-accent: #4da6ff; }  /* один цвет — все компоненты ваши */</pre>
+            <summary>④ Скины и темы</summary>
+            <pre>RPUI.Inventory({ skin: "huge", ... });   // tight / huge
+RPUI.HUD({ skin: "pro" });                  // naked / pro
+RPUI.Chat({ skin: "console" });             // bubble / console
+RPUI.Phone({ skin: "arctic" });             // arctic / bubblegum
+
+:root { --rpui-accent: #4da6ff; }   /* акцент — под ваш сервер */</pre>
           </div>
         </div>
       </div>
 
+      <!-- controls: inventory -->
       <div class="controls" data-controls="inv">
+        <span class="ctrl-label">скин</span>
+        <button class="skin-chip on" data-skin-inv="">Панель</button>
+        <button class="skin-chip" data-skin-inv="tight">Компакт</button>
+        <button class="skin-chip" data-skin-inv="huge">Огромный</button>
+        <span class="ctrl-label" style="margin-left:10px">демо</span>
         <button id="inv-add">+ случайный предмет</button>
-        <button id="inv-heavy">фу, тяжесть</button>
+        <button id="inv-heavy">тяжесть 🥧</button>
         <button id="inv-clear">очистить</button>
-        <span style="color:var(--dim);font:600 12px ui-monospace,monospace;align-self:center">→ перетаскивай ячейки, правый клик — действия</span>
       </div>
       <div class="controls" data-controls="hud" hidden>
+        <span class="ctrl-label">скин</span>
+        <button class="skin-chip on" data-skin-hud="">Кластер</button>
+        <button class="skin-chip" data-skin-hud="naked">Без рамки</button>
+        <button class="skin-chip" data-skin-hud="pro">ПРО</button>
+        <span class="ctrl-label" style="margin-left:10px">демо</span>
         <button data-sp="0">стоп</button>
-        <button data-sp="60" class="primary">60 км/ч</button>
-        <button data-sp="120" class="primary">120 км/ч</button>
-        <button data-sp="185" class="primary">185 км/ч</button>
+        <button data-sp="60" class="primary">60</button>
+        <button data-sp="120" class="primary">120</button>
+        <button data-sp="185" class="primary">185</button>
         <button id="hud-fuel">−10 топлива</button>
         <button id="hud-belt">ремень</button>
         <button id="hud-eng">двигатель</button>
         <button id="hud-street">улица…</button>
       </div>
       <div class="controls" data-controls="chat" hidden>
+        <span class="ctrl-label">скин</span>
+        <button class="skin-chip on" data-skin-chat="">Лента</button>
+        <button class="skin-chip" data-skin-chat="bubble">Баблы</button>
+        <button class="skin-chip" data-skin-chat="console">Консоль</button>
+        <span class="ctrl-label" style="margin-left:10px">демо</span>
         <button id="chat-msg" class="primary">+ сообщение</button>
         <button id="chat-admin">админское</button>
         <button id="chat-clear">очистить</button>
-        <span style="color:var(--dim);font:600 12px ui-monospace,monospace;align-self:center">→ поле ввода снизу слева тоже живое</span>
       </div>
       <div class="controls" data-controls="phone" hidden>
-        <button id="phone-toggle" class="primary">📱 открыть телефон</button>
-        <button id="phone-app">+ добавить своё приложение</button>
-        <span style="color:var(--dim);font:600 12px ui-monospace,monospace;align-self:center">→ СМС, банк, заметки, тема уже внутри</span>
+        <span class="ctrl-label">скин</span>
+        <button class="skin-chip on" data-skin-phone="">Оникс</button>
+        <button class="skin-chip" data-skin-phone="arctic">Арктика</button>
+        <button class="skin-chip" data-skin-phone="bubblegum">Баблгам</button>
+        <span class="ctrl-label" style="margin-left:10px">демо</span>
+        <button id="phone-toggle" class="primary">📱 открыть / закрыть</button>
+        <button id="phone-app">+ своё приложение</button>
       </div>
       <div class="controls" data-controls="wire" hidden>
         <a href="https://github.com/hilsetapp/rp-ui-kit" target="_blank" rel="noopener"><button class="primary">скопировать файлы из репо →</button></a>
@@ -216,7 +247,7 @@ alt.on("rpui:inventory:use", ({ data }) => alt.log("use", data.slot));</pre>
     </div>
 
     <aside class="log">
-      <h3>⚡ лентa событий (RPUI.on("*"))</h3>
+      <h3>⚡ лента событий (RPUI.on("*"))</h3>
       <div id="log"><div class="empty">пока тихо… потыкай интерфейс</div></div>
     </aside>
   </div>
@@ -253,21 +284,72 @@ alt.on("rpui:inventory:use", ({ data }) => alt.log("use", data.slot));</pre>
       if (b.dataset.tab === "phone" && phone && !phoneOn) { phone.open(); phoneOn = true; }
     });
 
-    /* ── inventory demo ── */
-    var inv = RPUI.Inventory({
-      columns: 6, rows: 5, maxWeight: 30, title: "Инвентарь",
-      items: [
-        { slot: 0, name: "Телефон", emoji: "📱", count: 1, weight: 0.2 },
-        { slot: 1, name: "ПМ", emoji: "🔫", count: 1, weight: 1.1 },
-        { slot: 2, name: "Бургер", emoji: "🍔", count: 3, weight: 0.4 },
-        { slot: 3, name: "Аптечка", emoji: "💊", count: 2, weight: 0.5 },
-        { slot: 6, name: "Глушилка", emoji: "📡", count: 1, weight: 0.9 },
-        { slot: 7, name: "Верёвка", emoji: "🪢", count: 1, weight: 0.7 },
-        { slot: 12, name: "Кока-кола", emoji: "🥤", count: 4, weight: 0.3 },
-      ],
-    });
-    document.querySelector('[data-pane="inv"]').appendChild(inv.el);
+    /* ── builders with skin switching ── */
+    var inv, hud, chat, phone, phoneOn = false, gpsOn = false;
+    var INV_ITEMS = [
+      { slot: 0, name: "Телефон", emoji: "📱", count: 1, weight: 0.2 },
+      { slot: 1, name: "ПМ", emoji: "🔫", count: 1, weight: 1.1 },
+      { slot: 2, name: "Бургер", emoji: "🍔", count: 3, weight: 0.4 },
+      { slot: 3, name: "Аптечка", emoji: "💊", count: 2, weight: 0.5 },
+      { slot: 6, name: "Глушилка", emoji: "📡", count: 1, weight: 0.9 },
+      { slot: 7, name: "Верёвка", emoji: "🪢", count: 1, weight: 0.7 },
+      { slot: 12, name: "Кока-кола", emoji: "🥤", count: 4, weight: 0.3 },
+    ];
+    function mountInv(skin) {
+      if (inv) inv.destroy();
+      inv = RPUI.Inventory({ columns: 6, rows: 5, maxWeight: 30, title: "Инвентарь", skin: skin || undefined, items: INV_ITEMS.slice() });
+      document.querySelector('[data-pane="inv"]').appendChild(inv.el);
+    }
+    mountInv();
 
+    var fuel = 62, belt = false, engWarn = false, curSpeed = 0, curRpm = 0;
+    var streets = ["Дел Пьерро", "Веспуччи", "Вайнвуд Хиллз", "Пилбокс Хилл", "Ла Меса"], streetI = 0;
+    function pushHud() { hud.update({ speed: curSpeed, rpm: curRpm, fuel: fuel, belt: belt, engine: engWarn, street: streets[streetI] }); }
+    function mountHud(skin) {
+      if (hud) hud.destroy();
+      hud = RPUI.HUD({ skin: skin || undefined });
+      document.querySelector('[data-pane="hud"]').appendChild(hud.el);
+      pushHud();
+    }
+    mountHud();
+
+    var demoMsgs = [
+      { tag: "ID 12", nick: "Макс Дитрих", text: "эпицентр, кто поедет за поставкой?" },
+      { tag: "ID 88", nick: "Лена Зарова", text: "иду, /me машет рукой" },
+      { tag: "ID 7", nick: "Гоша Приштолс", text: "лок: за магазином 24/7" },
+      { tag: "SYS", text: "[SYS] тёмная погода ожидается в 22:00", cls: "system" },
+      { tag: "ID 3", nick: "Коль Гжегож", text: "yy, ждите на точке" },
+    ];
+    function mountChat(skin) {
+      if (chat) chat.destroy();
+      chat = RPUI.Chat({ fadeMs: 10000, input: true, skin: skin || undefined });
+      document.querySelector('[data-pane="chat"]').appendChild(chat.el);
+      demoMsgs.slice(0, 2).forEach(function (m) { chat.push(m); });
+    }
+    mountChat();
+
+    function mountPhone(skin) {
+      if (phone) phone.destroy();
+      var opts = { balance: 12450, skin: skin || undefined };
+      if (gpsOn) opts.apps = [{ id: "gps", icon: "🗺", name: "GPS" }];
+      phone = RPUI.Phone(opts);
+      document.querySelector('[data-pane="phone"]').appendChild(phone.el);
+      if (phoneOn) phone.open();
+    }
+    mountPhone();
+
+    /* skin chips */
+    [["data-skin-inv", mountInv], ["data-skin-hud", mountHud], ["data-skin-chat", mountChat], ["data-skin-phone", mountPhone]]
+      .forEach(function (pair) {
+        document.querySelectorAll("[" + pair[0] + "]").forEach(function (chip) {
+          chip.addEventListener("click", function () {
+            document.querySelectorAll("[" + pair[0] + "]").forEach(function (c) { c.classList.toggle("on", c === chip); });
+            pair[1](chip.getAttribute(pair[0]) || null);
+          });
+        });
+      });
+
+    /* ── inventory demo controls ── */
     var POOL = [
       { name: "Донат", emoji: "🍩", weight: 0.2 }, { name: "Рация", emoji: "📻", weight: 0.4 },
       { name: "Бронежилет", emoji: "🦺", weight: 2.5 }, { name: "Сырок", emoji: "🧀", weight: 0.1 },
@@ -286,52 +368,29 @@ alt.on("rpui:inventory:use", ({ data }) => alt.log("use", data.slot));</pre>
     };
     document.getElementById("inv-clear").onclick = function () { inv.setItems([]); };
 
-    /* ── HUD demo ── */
-    var hud = RPUI.HUD();
-    document.querySelector('[data-pane="hud"]').appendChild(hud.el);
-    var fuel = 62, belt = false, engOk = true;
-    hud.update({ speed: 0, fuel: fuel, belt: belt, engine: false, street: "Дел Пьерро" });
-    var streets = ["Дел Пьерро", "Веспуччи", "Вайнвуд Хиллз", "Пилбокс Хилл", "Ла Меса"];
-    var streetI = 0;
+    /* ── HUD demo controls ── */
     document.querySelectorAll("[data-sp]").forEach(function (b) {
-      b.onclick = function () { hud.update({ speed: Number(b.dataset.sp) }); };
+      b.onclick = function () { curSpeed = Number(b.dataset.sp); curRpm = Math.min(1, curSpeed / 200); pushHud(); };
     });
-    document.getElementById("hud-fuel").onclick = function () { fuel = Math.max(0, fuel - 10); hud.update({ fuel: fuel }); };
-    document.getElementById("hud-belt").onclick = function () { belt = !belt; hud.update({ belt: belt }); };
-    document.getElementById("hud-eng").onclick = function () { engOk = !engOk; hud.update({ engine: !engOk }); };
-    document.getElementById("hud-street").onclick = function () { streetI = (streetI + 1) % streets.length; hud.update({ street: streets[streetI] }); };
+    document.getElementById("hud-fuel").onclick = function () { fuel = Math.max(0, fuel - 10); pushHud(); };
+    document.getElementById("hud-belt").onclick = function () { belt = !belt; pushHud(); };
+    document.getElementById("hud-eng").onclick = function () { engWarn = !engWarn; pushHud(); };
+    document.getElementById("hud-street").onclick = function () { streetI = (streetI + 1) % streets.length; pushHud(); };
 
-    /* ── chat demo ── */
-    var chat = RPUI.Chat({ fadeMs: 10000, input: true });
-    document.querySelector('[data-pane="chat"]').appendChild(chat.el);
-    var demoMsgs = [
-      { tag: "ID 12", nick: "Макс Дитрих", text: "Эпицентр, епты, кто поедет за поставкой?" },
-      { tag: "ID 88", nick: "Лена Зарова", text: "Иду, /me машет рукой" },
-      { tag: "ID 7", nick: "Гоша Приштолс", text: "лок: за магазином 24/7" },
-      { text: "[SYS] Тёмная погода ожидается в 22:00", cls: "system", tag: "SYS" },
-      { tag: "ID 3", nick: "Коль Гжегож", text: "yy, ждите на точке, +uss" },
-    ];
+    /* ── chat demo controls ── */
     document.getElementById("chat-msg").onclick = function () { chat.push(demoMsgs[Math.floor(Math.random() * demoMsgs.length)]); };
     document.getElementById("chat-admin").onclick = function () { chat.push({ tag: "ADMIN", nick: "Sport_Admin", text: "повёлся на репорт за 30 сек", cls: "admin" }); };
     document.getElementById("chat-clear").onclick = function () { chat.clear(); };
 
-    /* ── phone demo ── */
-    var phone = RPUI.Phone({ balance: 12450 });
-    document.querySelector('[data-pane="phone"]').appendChild(phone.el);
-    var phoneOn = false;
+    /* ── phone demo controls ── */
     document.getElementById("phone-toggle").onclick = function () {
       phoneOn = !phoneOn;
       phoneOn ? phone.open() : phone.close();
     };
-    var extraApp = false;
     document.getElementById("phone-app").onclick = function () {
-      if (extraApp) return; extraApp = true;
-      /* пересоздаём телефон с кастомным приложением — так же легко, как на вашем сервере.
-         Приложение без view → сервер получает событие phone:app и решает, что открыть. */
-      phone.destroy();
-      phone = RPUI.Phone({ balance: 12450, apps: [{ id: "gps", icon: "🗺", name: "GPS" }] });
-      document.querySelector('[data-pane="phone"]').appendChild(phone.el);
-      if (phoneOn) phone.open();
+      if (gpsOn) return;
+      gpsOn = true;
+      mountPhone(document.querySelector("[data-skin-phone].on").getAttribute("data-skin-phone"));
     };
   </script>
 </body>

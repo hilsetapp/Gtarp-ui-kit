@@ -156,7 +156,7 @@
 /* ═══════════ PHONE ═══════════ */
 .rpui-phone {
   position: absolute; right: 3%; bottom: 4%;
-  width: 300px; height: 590px;
+  width: 300px; height: min(590px, 92vh); /* never taller than the screen */
   background: #0d0c0b; border: 3px solid #2c2925; border-radius: 34px;
   font-family: var(--rpui-font); color: var(--rpui-text);
   overflow: hidden; user-select: none;
@@ -208,3 +208,63 @@
 .rpui-wall div { aspect-ratio: 1/1; border-radius: 10px; cursor: pointer; border: 2px solid transparent; }
 .rpui-wall div.on { border-color: #fff; }
 .rpui-poweroff { margin: 16px auto 4px; display: block; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SKINS — one attribute re-skins a component:  data-skin="…"
+   Implemented through local CSS-variable overrides, zero JS cost.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Inventory: tight ── */
+.rpui-inv[data-skin="tight"] { width: 340px; padding: 10px 12px; }
+.rpui-inv[data-skin="tight"] .rpui-inv-grid { gap: 4px; }
+.rpui-inv[data-skin="tight"] .rpui-cell { border-radius: 5px; font-size: 18px; }
+.rpui-inv[data-skin="tight"] .rpui-cell .name { display: none; }
+.rpui-inv[data-skin="tight"] .rpui-cell .count { font-size: 9px; }
+
+/* ── Inventory: huge ── */
+.rpui-inv[data-skin="huge"] { width: 540px; padding: 22px; }
+.rpui-inv[data-skin="huge"] .rpui-inv-grid { gap: 11px; }
+.rpui-inv[data-skin="huge"] .rpui-cell { border-radius: 14px; font-size: 36px; }
+.rpui-inv[data-skin="huge"] .rpui-cell .count { font-size: 13px; right: 8px; bottom: 7px; }
+.rpui-inv[data-skin="huge"] .rpui-inv-title { font-size: 18px; }
+
+/* ── HUD: naked (numbers float, no panel) ── */
+.rpui-hud[data-skin="naked"] { --rpui-bg: transparent; --rpui-line: 2px solid transparent; }
+.rpui-hud[data-skin="naked"] .rpui-hud-meter, .rpui-hud[data-skin="naked"] .rpui-hud-street { box-shadow: none; }
+.rpui-hud[data-skin="naked"] { text-shadow: 0 2px 12px rgba(0, 0, 0, .85); }
+.rpui-hud[data-skin="naked"] .rpui-hud-fuel { background: rgba(0,0,0,.3); }
+.rpui-hud[data-skin="naked"] .rpui-hud-street { background: rgba(0,0,0,.35); }
+
+/* ── HUD: pro (adds RPM bar) ── */
+.rpui-hud-rpm { display: none; margin-top: 8px; height: 7px; background: rgba(255,255,255,.08); border-radius: 99px; overflow: hidden; }
+.rpui-hud-rpm > span { display: block; height: 100%; background: var(--rpui-danger); transition: width .1s linear; }
+.rpui-hud[data-skin="pro"] .rpui-hud-rpm { display: block; }
+.rpui-hud[data-skin="pro"] { --rpui-accent: #4da6ff; }
+
+/* ── Chat: bubble ── */
+.rpui-chat[data-skin="bubble"] .rpui-msg { border-left: none; border-radius: 14px 14px 14px 4px; background: var(--rpui-accent); color: #17110a; font-weight: 600; }
+.rpui-chat[data-skin="bubble"] .rpui-msg .tag { background: rgba(0,0,0,.28); color: #fff; }
+.rpui-chat[data-skin="bubble"] .rpui-msg.system, .rpui-chat[data-skin="bubble"] .rpui-msg.admin { background: rgba(255,255,255,.1); color: var(--rpui-text); }
+
+/* ── Chat: console ── */
+.rpui-chat[data-skin="console"] { --rpui-accent: #2fd06a; --rpui-text: #a9f5c2; --rpui-bg: rgba(4, 12, 6, .92); }
+.rpui-chat[data-skin="console"] .rpui-msg { font-family: var(--rpui-mono); font-size: 12.5px; }
+.rpui-chat[data-skin="console"] .rpui-msg .tag { color: #0a1a0e; }
+
+/* ── Phone: arctic (light) ── */
+.rpui-phone[data-skin="arctic"] {
+  --rpui-bg2: #f5f1e9; --rpui-text: #2f2a22; --rpui-dim: #6e6657;
+  --rpui-line: 2px solid rgba(47, 42, 34, .14);
+  background: #e9e5db; border-color: #cfc8b8;
+}
+.rpui-phone[data-skin="arctic"] .rpui-app .ic { background: rgba(0,0,0,.05); border-color: rgba(0,0,0,.09); }
+.rpui-phone[data-skin="arctic"] .rpui-item { background: rgba(0,0,0,.04); border-color: rgba(0,0,0,.08); }
+.rpui-phone[data-skin="arctic"] .rpui-bubble { background: rgba(0,0,0,.07); }
+
+/* ── Phone: bubblegum ── */
+.rpui-phone[data-skin="bubblegum"] {
+  --rpui-bg2: #331726; --rpui-line: 2px solid rgba(255, 180, 220, .18);
+  --rpui-accent: #ff6fbb;
+  background: #2a1420; border-color: #59304a;
+}
+.rpui-phone[data-skin="bubblegum"] .rpui-phone-status { color: #ffc7e6; }

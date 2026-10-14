@@ -87,6 +87,23 @@ browser.call("RPUI.receive", JSON.stringify({ ev: "hud:update", data: { speed: 8
 :root { --rpui-accent: #4da6ff; } /* every component picks it up */
 ```
 
+## Skins — three looks per component (v0.2.0)
+
+Each component ships with built-in style presets, switched by one `skin` option:
+
+| Component | Skins |
+|---|---|
+| 🎒 Inventory | `panel` (default) · `tight` · `huge` |
+| 🚗 HUD | `cluster` (default) · `naked` · `pro` (+RPM bar) |
+| 💬 Chat | `stream` (default) · `bubble` · `console` |
+| 📱 Phone | `onyx` (default) · `arctic` · `bubblegum` |
+
+```js
+RPUI.Inventory({ skin: "huge", ... });
+```
+
+Try them all live in the playground — skin-chips sit right above the demo controls.
+
 Fonts, background, radius and danger/ok colors are variables too — see the top of `rp-ui-kit.css`.
 
 ## API cheat-sheet
