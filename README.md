@@ -1,141 +1,134 @@
 <div align="center">
 
-<img src="assets/logo.png" width="120" alt="RP UI Kit logo">
+<img src="assets/logo.png" width="120" alt="Логотип RP UI Kit">
 
 # RP UI Kit
 
-**Ready-made web interfaces for GTA RP servers. Any engine: RAGE MP, alt:V, NUI — or a plain browser.**
+**Готовые веб-интерфейсы для GTA RP серверов. Любой движок: RAGE MP, alt:V, NUI — или обычный браузер.**
 
-[![Live playground](https://img.shields.io/badge/Playground-hilsetapp.github.io%2Frp--ui--kit-ff8a2a?style=for-the-badge)](https://hilsetapp.github.io/rp-ui-kit/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-9ef24d?style=for-the-badge)](LICENSE)
-[![No build](https://img.shields.io/badge/build-none-e879f9?style=for-the-badge)](#)
+[![Сыграть в песочнице](https://img.shields.io/badge/Песочница-hilsetapp.github.io%2Frp--ui--kit-ff8a2a?style=for-the-badge)](https://hilsetapp.github.io/rp-ui-kit/)
+[![Лицензия: MIT](https://img.shields.io/badge/Лицензия-MIT-9ef24d?style=for-the-badge)](LICENSE)
 
-[🌍 Русская версия → README.ru.md](README.ru.md)
+[🌍 English version → README.en.md](README.en.md)
 
-![RP UI Kit banner](assets/og-banner.png)
+![Баннер RP UI Kit](assets/og-banner.png)
 
 </div>
 
 ---
 
-## What is this?
+## Что это?
 
-Every RP server re-builds the same muscle: an inventory, a phone, a speed HUD, a chat.
-That's weeks of UI plumbing instead of *your* gameplay.
+Каждый RP-сервер переписывает одно и то же: инвентарь, телефон, спидометр, чат.
+Это недели UI-возни вместо того, чтобы делать *свою* фишку.
 
-**RP UI Kit** is an open library of polished, production-grade interfaces as **two files** —
-no framework, no bundler, no `node_modules`. Drop it into your CEF folder, wire events,
-it just works.
+**RP UI Kit** — открытая библиотека готовых, вылизанных интерфейсов в **двух файлах**:
+без фреймворков, без сборки, без `node_modules`. Закинь в CEF-папку, подключи события — работает.
 
-### Inside v0.1.0
+### Что внутри v0.2
 
-| Component | What you get |
+| Компонент | Что получаешь |
 |---|---|
-| 🎒 **Inventory** | grid with real pointer drag-and-drop (works in old CEF!), counts, weight bar, right-click *use/toss* menu |
-| 🚗 **HUD** | speedometer with auto-gear, fuel bar with low-fuel alarm, belt & check-engine lamps, street label |
-| 💬 **Chat** | tagged messages, colored tags (admin/system), auto-fade, own input box |
-| 📱 **Phone** | notch → home screen → working apps: SMS threads, bank transfer form, notes (persisted), theme settings + your custom apps |
+| 🎒 **Инвентарь** | сетка с настоящим drag-and-drop (работает в старом CEF!), счётчики, вес, меню «использовать/выбросить» по правому клику |
+| 🚗 **HUD** | спидометр с автопередачами, шкала топлива с тревогой, лампы ремня и двигателя, табличка улицы |
+| 💬 **Чат** | теги сообщений, цветные теги (админ/систем), авто-затухание, поле ввода |
+| 📱 **Телефон** | чёлка → домашний экран → рабочие приложения: СМС-диалоги, банковский перевод, заметки (сохраняются), настройки темы + твои собственные приложения |
 
-### Engine-agnostic by design
+### Агностик движка по замыслу
 
-A single `RPUI.bridge` auto-detects where it's running:
+Один `RPUI.bridge` сам узнаёт, где исполняется:
 
-| Where | Outgoing events | Incoming events |
+| Где | Исходящие события | Входящие события |
 |---|---|---|
 | **RAGE MP** | `mp.trigger("rpui:*", json)` | `browser.call("RPUI.receive", json)` |
 | **alt:V** | `alt.emit("rpui:*", data)` | `webView.emit("RPUI.receive", …)` |
-| **browser** | console + JS listeners | `RPUI.receive(ev, data)` |
+| **браузер** | консоль + JS-подписчики | `RPUI.receive(ev, data)` |
 
-The same page can be developed **in your browser** (demo mode with an event log)
-and shipped **unchanged** into the game.
+Одна страница: разрабатываешь **в браузере** с демо-режимом и логом событий,
+а в игру уносишь **без единой правки**.
 
-## 🚀 Try the playground
+## 🚀 Поиграться: песочница
 
 > **https://hilsetapp.github.io/rp-ui-kit/**
 
-Interactive sandbox: drag items, press accelerator, open the phone — and watch
-the event stream your server would receive, live.
+Интерактив: тягай предметы, газуй по спидометру, открой телефон — и смотри вживую
+поток событий, которые получит твой сервер.
 
-## Quick start (4 steps)
+## Быстрый старт (4 шага)
 
 ```bash
-# 1. copy the files
-kit/rp-ui-kit.js  +  kit/rp-ui-kit.css  →  your CEF folder
+# 1. скопируй файлы
+kit/rp-ui-kit.js  +  kit/rp-ui-kit.css  →  твоя CEF-папка
 ```
 
 ```html
-<!-- 2. include -->
+<!-- 2. подключи -->
 <link rel="stylesheet" href="rp-ui-kit.css">
 <script src="rp-ui-kit.js"></script>
 ```
 
 ```js
-// 3. create
+// 3. создай
 const hud = RPUI.HUD();
 document.body.appendChild(hud.el);
 RPUI.on("hud:update", (d) => hud.update(d));
 ```
 
 ```js
-// 4. (RAGE MP server-side client_packages)
+// 4. клиентская часть RAGE MP
 browser.call("RPUI.receive", JSON.stringify({ ev: "hud:update", data: { speed: 88, fuel: 54 } }));
 ```
 
-## Theming — one line
+## Тема — одной строкой
 
 ```css
-:root { --rpui-accent: #4da6ff; } /* every component picks it up */
+:root { --rpui-accent: #4da6ff; } /* все компоненты подхватят */
 ```
 
-## Skins — three looks per component (v0.2.0)
+## Скины — три вида на компонент (v0.2.0)
 
-Each component ships with built-in style presets, switched by one `skin` option:
+У каждого компонента есть встроенные стили-пресеты, переключаются одной опцией `skin`:
 
-| Component | Skins |
+| Компонент | Скины |
 |---|---|
-| 🎒 Inventory | `panel` (default) · `tight` · `huge` |
-| 🚗 HUD | `cluster` (default) · `naked` · `pro` (+RPM bar) |
-| 💬 Chat | `stream` (default) · `bubble` · `console` |
-| 📱 Phone | `onyx` (default) · `arctic` · `bubblegum` |
+| 🎒 Инвентарь | `panel` (дефолт) · `tight` · `huge` |
+| 🚗 HUD | `cluster` (дефолт) · `naked` · `pro` (+RPM-шкала) |
+| 💬 Чат | `stream` (дефолт) · `bubble` · `console` |
+| 📱 Телефон | `onyx` (дефолт) · `arctic` · `bubblegum` |
 
 ```js
 RPUI.Inventory({ skin: "huge", ... });
 ```
 
-Try them all live in the playground — skin-chips sit right above the demo controls.
+Пощёлкай все в песочнице — чипы скинов прямо над кнопками демо.
 
-Fonts, background, radius and danger/ok colors are variables too — see the top of `rp-ui-kit.css`.
+Шрифты, фон, радиусы, цвета тревоги — тоже переменные: шапка файла `rp-ui-kit.css`.
 
-## API cheat-sheet
+## Шпаргалка по API
 
-| Factory | Emits | API |
+| Фабрика | Эмитит события | Методы |
 |---|---|---|
 | `RPUI.Inventory({columns, rows, items, maxWeight})` | `inventory:use · :move · :drop · :close` | `setItems(l)` `updateItem(slot, item?)` `close()` `show()` |
 | `RPUI.HUD()` | — | `update({speed,gear,fuel,belt,engine,street})` |
 | `RPUI.Chat({fadeMs, input, max})` | `chat:send` | `push({tag,nick,text,cls})` `clear()` |
 | `RPUI.Phone({balance, apps})` | `phone:close · :sms · :transfer · :app` | `open()` `close()` `setBalance(n)` |
 
-Events in **bold camel format** are documented in full inside
-[GUIDE (RU, beginner-friendly)](GUIDE_RU.md).
+Полное описание событий и подключение к **RedAge** — в
+[GUIDE_RU.md (для новичков, шаг за шагом)](GUIDE_RU.md).
 
-## Roadmap
+## Планы
 
-- 🧍 Character registration/lobby screen (v0.2)
-- 🗺 Minimap frame + zone alerts (v0.2)
-- 🧾 Notification toasts (v0.2)
-- Want one? [Open an issue](https://github.com/hilsetapp/rp-ui-kit/issues) or send a PR — see [CONTRIBUTING.md](CONTRIBUTING.md).
+- 🧍 Экран регистрации/лобби (v0.2)
+- 🗺 Рамка миникарты + зоновые алерты (v0.2)
+- 🧾 Тосты-уведомления (v0.2)
+- Чего не хватает именно тебе? [Пиши в Issues](https://github.com/hilsetapp/rp-ui-kit/issues) или присылай PR — [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Why free?
+## Лицензия
 
-Because every RP developer deserves their weekend back. If the kit saved you hours —
-[⭐ star the repo](https://github.com/hilsetapp/rp-ui-kit), that's the whole payment.
-
-## License
-
-MIT — do anything, just keep the notice. See [LICENSE](LICENSE).
+MIT — делай что хочешь, сохрани уведомление. [LICENSE](LICENSE).
 
 ---
 
 <div align="center">
-Made for the RU RP scene · works everywhere Lua refuses to run · 2026
+Сделано для RU RP-сцены · работает там, куда Lua не приходит · 2026
 </div>

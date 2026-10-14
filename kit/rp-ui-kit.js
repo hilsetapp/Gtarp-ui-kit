@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
-   RP UI KIT v0.1.0 — engine-agnostic web UI for GTA RP servers.
-   Works in RAGE MP CEF, alt:V CEF, FiveM NUI — and in a plain
-   browser (demo mode). Exposes one global: RPUI
+   RP UI KIT v0.2.2 — веб-интерфейсы для GTA RP серверов без привязки
+   к движку. Работает в RAGE MP CEF, alt:V CEF, FiveM NUI — и в обычном
+   браузере (демо-режим). Один глобал: RPUI
 
-   Copy ONE line into your page:
+   Подключается ДВУМЯ строками:
      <link rel="stylesheet" href="rp-ui-kit.css">
      <script src="rp-ui-kit.js"><\/script>
    ═══════════════════════════════════════════════════════════════ */
@@ -11,7 +11,7 @@
 (function () {
   "use strict";
 
-  /* ─────────── tiny DOM helper ─────────── */
+  /* ─────────── крошечный DOM-помощник ─────────── */
   function h(tag, attrs, children) {
     var el = document.createElement(tag);
     if (attrs) {
@@ -31,7 +31,7 @@
   var $ = function (root, sel) { return root.querySelector(sel); };
   function applySkin(el, opts) { if (opts && opts.skin) el.setAttribute("data-skin", opts.skin); }
 
-  /* ─────────── engine bridge ─────────── */
+  /* ─────────── мост к движку ─────────── */
   function detectEngine() {
     if (window.mp && typeof window.mp.trigger === "function") return "rage";
     if (window.alt && typeof window.alt.emit === "function") return "altv";
@@ -41,10 +41,10 @@
   var listeners = {};
 
   /**
-   * Every component event leaves the page through here.
+   * Каждое событие любого компонента уходит со страницы через здесь.
    * RAGE MP:  mp.trigger("rpui:inventory:use", '{"ev":"inventory:use","data":{...}}')
    * alt:V:    alt.emit("rpui:inventory:use", { ev, data })
-   * Browser:  console + JS subscribers (demo mode)
+   * Браузер:  console.log + JS-подписчики (демо-режим)
    */
   function emit(ev, data) {
     var wrapped = { ev: ev, data: data };
@@ -78,10 +78,10 @@
   }
 
   /**
-   * Entry point for engine → page calls.
+   * Точка входа для вызовов движок → страница.
    * RAGE:   browser.call("RPUI.receive", '{"ev":"hud:update","data":{"speed":88}}')
    * alt:V:  webView.emit("RPUI.receive", "hud:update", { speed: 88 })
-   * alt:V also:  alt.on("hud:update", d => RPUI.receive("hud:update", d))
+   * alt:V ещё:  alt.on("hud:update", d => RPUI.receive("hud:update", d))
    */
   function receive(evOrJson, data) {
     if (data === undefined && typeof evOrJson === "string" && evOrJson.charAt(0) === "{") {
@@ -93,11 +93,11 @@
     fanout(String(evOrJson), data);
   }
 
-  /* ═══════════ COMPONENT: Inventory ═══════════ */
+  /* ═══════════ КОМПОНЕНТ: Инвентарь ═══════════ */
   /**
    * const inv = RPUI.Inventory({ columns: 6, rows: 5, maxWeight: 30, items: [...] })
-   * events →  inventory:use {slot, item}, inventory:move {from, to},
-   *           inventory:drop {slot, item}, inventory:close {}
+   * события →  inventory:use {slot, item}, inventory:move {from, to},
+   *            inventory:drop {slot, item}, inventory:close {}
    */
   function Inventory(opts) {
     opts = opts || {};
@@ -105,7 +105,7 @@
     var rows = opts.rows || 5;
     var maxWeight = opts.maxWeight || 30;
     var title = opts.title || "Inventory";
-    var items = {}; /* slot -> item */
+    var items = {}; /* слот → предмет */
     (opts.items || []).forEach(function (it) { items[it.slot] = it; });
 
     function weight() {
@@ -165,7 +165,7 @@
     for (var s2 in items) refreshCell(Number(s2));
     refreshWeight();
 
-    /* drag & drop (pointer-based: dependable inside old CEF) */
+    /* drag&drop на pointer-событиях: надёжно даже в старом CEF */
     var drag = null; /* {from, ghost} */
     grid.addEventListener("pointerdown", function (e) {
       var cell = e.target.closest ? e.target.closest(".rpui-cell") : null;
@@ -211,7 +211,7 @@
       var from = drag.from;
       drag = null;
       if (to == null || to === from) return;
-      /* swap semantics: empty cell = move, occupied = swap */
+      /* семантика: пустая ячейка = переместить, занятая = поменять местами */
       var tmp = items[to];
       items[to] = items[from];
       items[from] = tmp;
@@ -221,7 +221,7 @@
       emit("inventory:move", { from: from, to: to });
     }
 
-    /* right-click context menu: use / drop */
+    /* контекстное меню (правый клик): использовать / выбросить */
     var ctxEl = null;
     function closeCtx() { if (ctxEl) { ctxEl.remove(); ctxEl = null; } }
     grid.addEventListener("contextmenu", function (e) {
@@ -233,11 +233,11 @@
       e.preventDefault();
       closeCtx();
       ctxEl = h("div", { class: "rpui-ctx rpui-box" }, [
-        h("button", { onclick: function () { emit("inventory:use", { slot: slot, item: it }); closeCtx(); } }, ["✔ Use"]),
+        h("button", { onclick: function () { emit("inventory:use", { slot: slot, item: it }); closeCtx(); } }, ["✔ Использовать"]),
         h("button", { class: "danger", onclick: function () {
           delete items[slot]; refreshCell(slot); refreshWeight();
           emit("inventory:drop", { slot: slot, item: it }); closeCtx();
-        } }, ["🗑 Toss"]),
+        } }, ["🗑 Выбросить"]),
       ]);
       ctxEl.style.left = Math.min(e.clientX, window.innerWidth - 150) + "px";
       ctxEl.style.top = Math.min(e.clientY, window.innerHeight - 110) + "px";
@@ -267,9 +267,9 @@
     return api;
   }
 
-  /* ═══════════ COMPONENT: HUD ═══════════ */
+  /* ═══════════ КОМПОНЕНТ: HUD-спидометр ═══════════ */
   /**
-   * const hud = RPUI.HUD() → hud.update({speed, gear, fuel, belt, engine, street})
+   * const hud = RPUI.HUD() → hud.update({speed, gear, fuel, belt, engine, street, rpm})
    */
   function HUD(opts) {
     opts = opts || {};
@@ -318,7 +318,7 @@
           fuelWrap.classList.toggle("low", f <= 15);
         }
         if (d.belt != null) beltEl.classList.toggle("off", !d.belt);
-        /* engine = check-engine warning: true → lamp lit, false → dimmed */
+        /* engine = лампа check-engine: true → горит, false → потушена */
         if (d.engine != null) engEl.classList.toggle("off", !d.engine);
         if (d.rpm != null) rpmBar.style.width = Math.max(0, Math.min(1, d.rpm)) * 100 + "%";
         if (d.street != null) streetEl.textContent = d.street;
@@ -328,10 +328,10 @@
     return api;
   }
 
-  /* ═══════════ COMPONENT: Chat ═══════════ */
+  /* ═══════════ КОМПОНЕНТ: Чат ═══════════ */
   /**
    * const chat = RPUI.Chat({ fadeMs: 9000, input: true })
-   * chat.push({tag, nick, text, cls})  | events → chat:send {text}
+   * chat.push({tag, nick, text, cls})  | события → chat:send {text}
    */
   function Chat(opts) {
     opts = opts || {};
@@ -380,11 +380,11 @@
     return api;
   }
 
-  /* ═══════════ COMPONENT: Phone ═══════════ */
+  /* ═══════════ КОМПОНЕНТ: Телефон ═══════════ */
   /**
    * const phone = RPUI.Phone({ balance: 12450 })
-   * events → phone:close {}, phone:sms {to, msg}, phone:transfer {amount}, phone:app {id}
-   * custom apps: RPUI.Phone({ apps: [{id:"gps", icon:"🗺", name:"GPS", view(body){}}] })
+   * события → phone:close {}, phone:sms {to, msg}, phone:transfer {amount}, phone:app {id}
+   * свои приложения: RPUI.Phone({ apps: [{id:"gps", icon:"🗺", name:"GPS", view(body){}}] })
    */
   function Phone(opts) {
     opts = opts || {};
@@ -418,7 +418,7 @@
       appView.classList.add("on");
     }
 
-    /* built-in: messages */
+    /* встроенное: сообщения */
     var threads = [
       { to: "Макс Дитрих", last: "Ю, гонка сегодня?", msgs: [{ me: 0, t: "Ю, гонка сегодня?" }, { me: 1, t: "Да, в 21:00 у порта" }] },
       { to: "Городской банк", last: "Зарплата: +$4 200", msgs: [{ me: 0, t: "Зарплата: +$4 200" }] },
@@ -455,7 +455,7 @@
       appView.classList.add("on");
     }
 
-    /* built-in: bank */
+    /* встроенное: банк */
     function viewBank() {
       var sum = h("div", { class: "rpui-bank-sum" }, ["$ " + balance.toLocaleString("ru-RU")]);
       var amount = h("input", { placeholder: "Сумма перевода", type: "number", style: "width:100%;padding:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:9px;color:inherit;font:500 13px var(--rpui-font);outline:none" });
@@ -471,7 +471,7 @@
       ]));
     }
 
-    /* built-in: notes (persisted locally) */
+    /* встроенное: заметки (хранятся локально) */
     function viewNotes() {
       var area = h("textarea", { class: "rpui-notes-area", placeholder: "Свободный холст для ролеплея…" });
       try { area.value = localStorage.getItem("rpui-notes") || ""; } catch (e) {}
@@ -479,7 +479,7 @@
       openView("Заметки", area);
     }
 
-    /* built-in: settings (accent + wallpaper) */
+    /* встроенное: настройки (акцент + обои) */
     var walls = ["#1c1916", "#243527", "#1e2b3a", "#3a2026", "#3d341d"];
     function viewSettings() {
       var wraps = h("div", { class: "rpui-wall" }, walls.map(function (c) {
@@ -535,9 +535,9 @@
     return api;
   }
 
-  /* ─────────── public API ─────────── */
+  /* ─────────── публичный API ─────────── */
   window.RPUI = {
-    version: "0.2.0",
+    version: "0.2.2",
     engine: ENGINE,
     on: on, off: off, emit: emit, receive: receive,
     Inventory: Inventory, HUD: HUD, Chat: Chat, Phone: Phone,

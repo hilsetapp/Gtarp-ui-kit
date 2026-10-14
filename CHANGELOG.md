@@ -1,40 +1,52 @@
-# Changelog
+# Список изменений
+
+## [0.2.2] — 2026-10-14
+
+### Изменено
+- 🇷🇺 **Репозиторий теперь полностью русскоязычный.** Ниша RP UI Kit —
+  RU-сообщество GTA RP (ragemp.pro, ragem.ru и ко), поэтому русский стал
+  языком проекта по умолчанию:
+  - `README.md` — русский (английский переехал в `README.en.md`);
+  - CHANGELOG и Кодекс поведения переведены;
+  - все комментарии и встроенная документация в `kit/rp-ui-kit.js` — на русском;
+  - пункты контекстного меню инвентаря: «✔ Использовать» / «🗑 Выбросить».
+- API, имена событий и опции не менялись — обратная совместимость полная.
 
 ## [0.2.1] — 2026-10-14
 
-### Fixed
-- 📱 **Playground: phone now always fits the demo stage.** A 590 px device could
-  never fit a ~460 px «game screen» stage — it was cropped at the top and looked
-  empty. The playground now measures the stage and auto-scales the phone
-  (`scale(0.74…0.99)`), which is also closer to how big the phone really looks
-  on a 1080p game screen. Verified with headless Chromium on 3 viewport sizes
-  + after skin switching. Kit itself unchanged (in a real full-screen CEF the
-  phone has the whole viewport, so no scaling is needed there).
+### Исправлено
+- 📱 **Песочница: телефон теперь всегда помещается в сцене.** Аппарат высотой
+  590px физически не влезал в «игровой экран» ~460px — обрезался сверху и
+  выглядел пустым. Песочница замеряет сцену и автомасштабирует телефон
+  (`scale(0.74…0.99)`) — так он ещё и по пропорциям похож на настоящий
+  телефон на 1080p-экране. Проверено headless Chromium на 3 размерах окон
+  и после переключения скинов. Сам кит не менялся (в боевом полноэкранном
+  CEF телефону доступен весь вьюпорт, масштаб не нужен).
 
 ## [0.2.0] — 2026-10-14
 
-### Added
-- 🎨 **Skin system** — every component now ships 3 built-in looks switchable by
-  one `skin` option: inventory `tight`/`huge`, HUD `naked`/`pro` (+RPM bar),
-  chat `bubble`/`console`, phone `arctic`/`bubblegum`. Implemented via local
-  CSS-variable overrides — zero runtime cost, easy to fork into your own preset.
-- HUD `update({rpm})` support (visible in `pro` skin).
-- Playground: skin-chips above demo controls for every component.
+### Добавлено
+- 🎨 **Система скинов** — у каждого компонента теперь 3 готовых облика,
+  переключаются одной опцией `skin`: инвентарь `tight`/`huge`,
+  HUD `naked`/`pro` (+RPM-шкала), чат `bubble`/`console`,
+  телефон `arctic`/`bubblegum`. Реализовано локальными переопределениями
+  CSS-переменных — ноль накладных расходов, легко форкнуть в свой пресет.
+- HUD научился `update({rpm})` (видно в скине `pro`).
+- Песочница: чипы-скины над кнопками демо у каждого компонента.
 
-### Fixed
-- 📱 Phone height no longer overflows small screens (`min(590px, 92vh)`) — on the
-  playground stage it could be rendered cropped at the top.
-- Doc comment in `rp-ui-kit.js` contained a literal `</script>` — neutralized,
-  the file is now safe to inline/bundle.
+### Исправлено
+- 📱 Высота телефона больше не переполняет маленькие экраны (`min(590px, 92vh)`).
+- В док-комментарии `rp-ui-kit.js` затесался литеральный `</script>` —
+  нейтрализован, файл безопасно встраивать/бандлить.
 
 ## [0.1.0] — 2026-10-13
 
-### Added
-- 🎉 First release of **RP UI Kit** — engine-agnostic web interfaces for GTA RP servers
-- Универсальный мост `RPUI.bridge`: RAGE MP (`mp.trigger`/`browser.call`), alt:V (`alt.emit`), browser demo mode
-- 🎒 Inventory: pointer drag-and-drop (old-CEF safe), counts, weight, use/toss context menu
-- 🚗 HUD: speedometer + auto-gear, fuel with low alarm, belt/check-engine lamps, street
-- 💬 Chat: tags, colored admin/system classes, auto-fade, input box
-- 📱 Phone: home screen, SMS threads, bank transfer, persisted notes, accent/wallpaper settings, custom apps hook
-- 🏁 Interactive playground (landing page) with live event log + RAGE/alt:V wiring snippets
-- Bilingual docs (EN/RU) + beginner guide (GUIDE_RU)
+### Добавлено
+- 🎉 Первый релиз **RP UI Kit** — веб-интерфейсы для GTA RP серверов без привязки к движку
+- Универсальный мост `RPUI.bridge`: RAGE MP (`mp.trigger`/`browser.call`), alt:V (`alt.emit`), браузерный демо-режим
+- 🎒 Инвентарь: drag-and-drop на pointer-событиях (безопасно в старом CEF), количество, вес, контекстное меню использования/выброса
+- 🚗 HUD: спидометр + авто-передача, топливо с тревогой, лампы ремня и check-engine, название улицы
+- 💬 Чат: теги, цветные классы админ/система, автозатухание, поле ввода
+- 📱 Телефон: домашний экран, треды СМС, банковский перевод, заметки с сохранением, настройки акцента/обоев, хук своих приложений
+- 🏁 Интерактивная песочница (лендинг) с живой лентой событий + сниппеты подключения RAGE/alt:V
+- Двуязычная документация + гайд для новичков (GUIDE_RU)

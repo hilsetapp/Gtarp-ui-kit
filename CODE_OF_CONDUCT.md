@@ -1,41 +1,48 @@
-# Contributor Covenant Code of Conduct
+# Кодекс поведения участников
 
-## Our Pledge
+## Наше обещание
 
-We as members, contributors, and leaders pledge to make participation in our
-community a harassment-free experience for everyone, regardless of age, body
-size, visible or invisible disability, ethnicity, sex characteristics, gender
-identity and expression, level of experience, education, socio-economic status,
-nationality, personal appearance, race, religion, or sexual identity
-and orientation.
+Мы, участники и мейнтейнеры проекта, обещаем сделать участие в сообществе
+свободным от притеснений для всех — независимо от возраста, телосложения,
+видимой или невидимой инвалидности, этничности, пола, гендерной идентичности,
+уровня опыта, образования, социального статуса, национальности, внешности,
+расы, религии или сексуальной ориентации.
 
-We pledge to act and interact in ways that contribute to an open, welcoming,
-diverse, inclusive, and healthy community.
+Мы обещаем действовать и взаимодействовать так, чтобы сообщество было
+открытым, дружелюбным, разнообразным, инклюзивным и здоровым.
 
-## Our Standards
+## Наши стандарты
 
-Examples of behavior that contributes to a positive environment:
+Примеры поведения, создающего позитивную среду:
 
-* Demonstrating empathy and kindness toward other people
-* Being respectful of differing opinions, viewpoints, and experiences
-* Giving and gracefully accepting constructive feedback
-* Accepting responsibility and apologizing to those affected by our mistakes
-* Focusing on what is best for the overall community
+- проявление эмпатии и доброты к другим людям;
+- уважение к иным мнениям, точкам зрения и опыту;
+- корректная обратная связь — и её изящное принятие;
+- ответственность за свои ошибки и извинения перед пострадавшими;
+- фокус на том, что лучше для всего сообщества, а не только для себя.
 
-Examples of unacceptable behavior:
+Примеры неприемлемого поведения:
 
-* The use of sexualized language or imagery, and sexual attention or advances
-* Trolling, insulting or derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information without their explicit permission
-* Other conduct which could reasonably be considered inappropriate
+- сексуализированные намёки, выражения или домогательства любого рода;
+- троллинг, оскорбления, пренебрежительные комментарии, личные и политические атаки;
+- публичные или приватные притеснения;
+- публикация чужих личных данных без явного разрешения;
+- любое иное поведение, которое разумно счесть неуместным в профессиональной среде.
 
-## Enforcement
+## Ответственность
 
-Instances of unacceptable behavior may be reported to the maintainer via
-GitHub. All complaints will be reviewed and investigated promptly and fairly.
+Мейнтейнеры проекта вправе удалять, редактировать или отклонять комментарии,
+коммиты, код, правки вики, вопросы и иной вклад, нарушающий этот кодекс, —
+с объяснением причин, где это уместно.
 
-## Attribution
+## Применение
 
-Adapted from the [Contributor Covenant](https://www.contributor-covenant.org),
-version 2.1.
+О случаях оскорбительного или иного неприемлемого поведения сообщайте
+через Issues репозитория (пометьте «code of conduct») или напрямую автору.
+Все жалобы будут рассмотрены оперативно и честно. Мейнтейнеры обязуются
+соблюдать конфиденциальность в отношении заявителя.
+
+## Атрибуция
+
+Этот кодекс адаптирован из [Contributor Covenant](https://www.contributor-covenant.org),
+версия 2.1 (официальный перевод доступен на сайте проекта).
