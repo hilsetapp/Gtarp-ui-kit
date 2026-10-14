@@ -1,16 +1,15 @@
 # Changelog
 
-## [0.1.0] — 2026-10-13
+## [0.2.1] — 2026-10-14
 
-### Added
-- 🎉 First release of **RP UI Kit** — engine-agnostic web interfaces for GTA RP servers
-- Универсальный мост `RPUI.bridge`: RAGE MP (`mp.trigger`/`browser.call`), alt:V (`alt.emit`), browser demo mode
-- 🎒 Inventory: pointer drag-and-drop (old-CEF safe), counts, weight, use/toss context menu
-- 🚗 HUD: speedometer + auto-gear, fuel with low alarm, belt/check-engine lamps, street
-- 💬 Chat: tags, colored admin/system classes, auto-fade, input box
-- 📱 Phone: home screen, SMS threads, bank transfer, persisted notes, accent/wallpaper settings, custom apps hook
-- 🏁 Interactive playground (landing page) with live event log + RAGE/alt:V wiring snippets
-- Bilingual docs (EN/RU) + beginner guide (GUIDE_RU)
+### Fixed
+- 📱 **Playground: phone now always fits the demo stage.** A 590 px device could
+  never fit a ~460 px «game screen» stage — it was cropped at the top and looked
+  empty. The playground now measures the stage and auto-scales the phone
+  (`scale(0.74…0.99)`), which is also closer to how big the phone really looks
+  on a 1080p game screen. Verified with headless Chromium on 3 viewport sizes
+  + after skin switching. Kit itself unchanged (in a real full-screen CEF the
+  phone has the whole viewport, so no scaling is needed there).
 
 ## [0.2.0] — 2026-10-14
 
@@ -27,3 +26,15 @@
   playground stage it could be rendered cropped at the top.
 - Doc comment in `rp-ui-kit.js` contained a literal `</script>` — neutralized,
   the file is now safe to inline/bundle.
+
+## [0.1.0] — 2026-10-13
+
+### Added
+- 🎉 First release of **RP UI Kit** — engine-agnostic web interfaces for GTA RP servers
+- Универсальный мост `RPUI.bridge`: RAGE MP (`mp.trigger`/`browser.call`), alt:V (`alt.emit`), browser demo mode
+- 🎒 Inventory: pointer drag-and-drop (old-CEF safe), counts, weight, use/toss context menu
+- 🚗 HUD: speedometer + auto-gear, fuel with low alarm, belt/check-engine lamps, street
+- 💬 Chat: tags, colored admin/system classes, auto-fade, input box
+- 📱 Phone: home screen, SMS threads, bank transfer, persisted notes, accent/wallpaper settings, custom apps hook
+- 🏁 Interactive playground (landing page) with live event log + RAGE/alt:V wiring snippets
+- Bilingual docs (EN/RU) + beginner guide (GUIDE_RU)
