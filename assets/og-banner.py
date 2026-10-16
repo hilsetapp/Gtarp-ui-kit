@@ -80,7 +80,7 @@ rr((sx+20, sy+68, sx+210, sy+74), 4, fill=ACC)
 
 # --- ticker strip ---
 d.rectangle((0, H-52, W, H), fill=(14, 12, 10))
-d.text((W//2, H-27), "hilsetapp.github.io/rp-ui-kit  ⚡  two files · zero build · any engine", font=font(FM, 23), fill=CREAM, anchor="mm")
+d.text((W//2, H-27), "hilsetapp.github.io/Gtarp-ui-kit  ⚡  two files · zero build · any engine", font=font(FM, 23), fill=CREAM, anchor="mm")
 
 d.rectangle((6, 6, W-6, H-6), outline=(60, 55, 48), width=3)
 
